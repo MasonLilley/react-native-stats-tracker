@@ -16,7 +16,7 @@ function ChooseExerciseModal({ navigation }) {
                 useNativeDriver: true,
             }),
             Animated.timing(exercisesAnimatedValue, {
-                toValue: isActive ? 100 : -700, // Animate menu content
+                toValue: isActive ? 100 : -720, // Animate menu content
                 duration: 200,
                 useNativeDriver: true,
             })
@@ -80,10 +80,10 @@ function ChooseExerciseModal({ navigation }) {
                 return (
                     <View>
                         <TouchableOpacity 
-                        style={[styles.button]} 
+                        style={styles.button} 
                         onPress={() => animateButton()}>
                             <Text style={styles.buttonText}>Go Back</Text>
-                        </TouchableOpacity>                        
+                        </TouchableOpacity>
                         <TricepsScreen />
                     </View>
                 );
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         height: '100%',
         alignItems: 'center',
         elevation: 4,
-        backgroundColor: 'blue',
+        // backgroundColor: 'lightgray',
     },
     menuText: {
         fontSize: 18,
