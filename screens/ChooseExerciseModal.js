@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, Button } from 'react-native';
+import TricepsScreen from './exercises/TricepExercises';
 
 function ChooseExerciseModal({ navigation }) {
     const [selectedExercise, setSelectedExercise] = useState('');
@@ -15,7 +16,7 @@ function ChooseExerciseModal({ navigation }) {
                 useNativeDriver: true,
             }),
             Animated.timing(exercisesAnimatedValue, {
-                toValue: isActive ? 100 : -740, // Animate menu content
+                toValue: isActive ? 100 : -700, // Animate menu content
                 duration: 200,
                 useNativeDriver: true,
             })
@@ -77,10 +78,13 @@ function ChooseExerciseModal({ navigation }) {
         switch (selectedExercise) {
             case 'Triceps':
                 return (
-                    <View style={styles.triceps}>
-                        <TouchableOpacity style={[styles.morebutton]} onPress={() => animateButton()}>
-                            <Text style={styles.text}>Go Back</Text>
-                        </TouchableOpacity>
+                    <View>
+                        <TouchableOpacity 
+                        style={[styles.button]} 
+                        onPress={() => animateButton()}>
+                            <Text style={styles.buttonText}>Go Back</Text>
+                        </TouchableOpacity>                        
+                        <TricepsScreen />
                     </View>
                 );
             case 'Biceps':
@@ -117,6 +121,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         width: '80%',
+        alignSelf: 'center',
     },
     buttonText: {
         color: '#333',
