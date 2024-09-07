@@ -1,16 +1,39 @@
-import React from 'react';
+import { useSQLiteContext } from 'expo-sqlite';
+import React, { useState, useEffect } from 'react';
+import { ScrollView } from 'react-native';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 function TricepsScreen({ onAnimateButton }) {
-    return (
+  const [exercises, setExercises] = useState([]);
+  const db = useSQLiteContext();
+
+  async function getData() {
+    const result = await db.getAllAsync('SELECT * FROM Exercises');
+    setExercises(result);
+  }
+
+  useEffect(() => {
+    db.withTransactionAsync(async () => {
+      await getData();
+      console.log(exercises);
+    });
+  }, [db]);
+
+  return (
+    // <ScrollView style={styles.scrollview}>
       <View style={styles.container}>
-          <TouchableOpacity style={styles.button} onPress={() => {
-            onAnimateButton()
-          }}>
-            <Text style={styles.buttonText}>Database Exercise 1</Text>
-          </TouchableOpacity>
+        {exercises.length > 0 ? (
+          exercises.map((exercise) => (
+            <TouchableOpacity key={exercise.id} style={styles.button}>
+              <Text>{exercise.name}</Text>
+            </TouchableOpacity>
+          ))
+        ) : (
+          <Text>No exercises found.</Text>
+        )}
       </View>
-    );
+    // </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -20,6 +43,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     width: '100%',
+  },
+  scrollview: {
+    width: '150%',
   },
   text: {
     fontSize: 24,
@@ -36,8 +62,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    width: '80%',
+    width: '70%',
     alignSelf: 'center',
+    alignItems: 'center',
   },
   buttonText: {
     color: '#333',

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, Button } from 'react-native';
 import TricepsScreen from './exercises/TricepExercises';
-import DatabaseManager from '../components/DatabaseManager';
+// import DatabaseManager from '../components/DatabaseManager';
 
 function ChooseExerciseModal({ navigation }) {
     const [selectedExercise, setSelectedExercise] = useState('');
@@ -37,7 +37,7 @@ function ChooseExerciseModal({ navigation }) {
     const menuContentStyle = {
         transform: [
             {
-                translateY: exercisesAnimatedValue, // Apply translation to menu content
+                translateY: exercisesAnimatedValue,
             },
         ],
     };
@@ -48,7 +48,7 @@ function ChooseExerciseModal({ navigation }) {
                 <TouchableOpacity 
                     style={[styles.button, buttonStyle]} 
                     onPress={() => {
-                        setSelectedExercise('Triceps'); // Set selected exercise
+                        setSelectedExercise('Triceps');
                         animateButton();
                     }}
                 >
@@ -58,7 +58,7 @@ function ChooseExerciseModal({ navigation }) {
                 <TouchableOpacity 
                     style={[styles.button, buttonStyle]} 
                     onPress={() => {
-                        setSelectedExercise('Biceps'); // Set selected exercise
+                        setSelectedExercise('Biceps');
                         animateButton();
                     }}
                 >
@@ -80,7 +80,7 @@ function ChooseExerciseModal({ navigation }) {
         switch (selectedExercise) {
             case 'Triceps':
                 return (
-                    <View>
+                    <View style={styles.exerciseScreen}>
                         <TouchableOpacity 
                         style={styles.button} 
                         onPress={() => animateButton()}>
@@ -88,24 +88,37 @@ function ChooseExerciseModal({ navigation }) {
                         </TouchableOpacity>
 
                         <Text style={styles.padding}></Text>
-                        <DatabaseManager />
+                        {/* <DatabaseManager /> */}
                         <TricepsScreen onAnimateButton={animateButton}/>
                     </View>
                 );
             case 'Biceps':
                 return (
-                    <Text style={styles.menuText}>Biceps Exercises Content</Text>
-                );
+                    <View style={styles.exerciseScreen}>
+                        <TouchableOpacity 
+                        style={styles.button} 
+                        onPress={() => animateButton()}>
+                            <Text style={styles.buttonText}>Go Back</Text>
+                        </TouchableOpacity>
+
+                        <Text style={styles.padding}></Text>
+                        <Text>HELLO BICEPS</Text>
+                    </View>                );
             default:
                 return null; 
         }
     }
 }
 
-
-
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        alignSelf: 'center',
+        width: '100%',
+    },
+    exerciseScreen: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',
