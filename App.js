@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import WorkoutManager from './components/WorkoutManager';
-import Button from './components/Button';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import AppNavigator from './routes/AppNavigator';
 import { SQLiteProvider } from 'expo-sqlite';
 import DatabaseFallback from './screens/DatabaseFallback';
@@ -20,8 +16,8 @@ const loadDatabse = async () => {
   const fileInfo  = await FileSystem.getInfoAsync(dbFilePath);
   if (!fileInfo.exists) {
     await FileSystem.makeDirectoryAsync(`${FileSystem.documentDirectory}SQLite`, { intermediates: true });
-    await FileSystem.downloadAsync(dbUri, dbFilePath);
   }
+  await FileSystem.downloadAsync(dbUri, dbFilePath);
 }
 
 export default function App() {

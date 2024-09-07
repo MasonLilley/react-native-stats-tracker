@@ -1,28 +1,36 @@
 import { useSQLiteContext } from 'expo-sqlite';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 function TricepsScreen({ onAnimateButton }) {
-  const [exercises, setExercises] = useState();
+  const [exercises, setExercises] = useState([]);
   const db = useSQLiteContext();
 
   async function getData() {
-    console.log('called');
     const result = await db.getAllAsync('SELECT * FROM Exercises');
-    console.log(result);
+    setExercises(result);
   }
 
+  useEffect(() => {
+    db.withTransactionAsync(async () => {
+      await getData();
+      console.log(exercises);
+    });
+  }, [db]);
 
-    return (
-      <View style={styles.container}>
-          <TouchableOpacity style={styles.button} onPress={() => {
-            getData()
-          }}>
-            <Text style={styles.buttonText}>Database Exercise 1</Text>
+  return (
+    <View style={styles.container}>
+      {exercises.length > 0 ? (
+        exercises.map((exercise) => (
+          <TouchableOpacity key={exercise.id} style={styles.button}>
+            <Text>{exercise.name}</Text>
           </TouchableOpacity>
-      </View>
-    );
+        ))
+      ) : (
+        <Text>No exercises found.</Text>
+      )}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
