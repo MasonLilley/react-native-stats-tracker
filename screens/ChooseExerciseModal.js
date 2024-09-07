@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Animated, Button } from 'react-native';
 import TricepsScreen from './exercises/TricepExercises';
+import DatabaseManager from '../components/DatabaseManager';
 
 function ChooseExerciseModal({ navigation }) {
     const [selectedExercise, setSelectedExercise] = useState('');
@@ -74,6 +75,7 @@ function ChooseExerciseModal({ navigation }) {
         </View>
     );
 
+
     function renderMenuContent() {
         switch (selectedExercise) {
             case 'Triceps':
@@ -84,7 +86,10 @@ function ChooseExerciseModal({ navigation }) {
                         onPress={() => animateButton()}>
                             <Text style={styles.buttonText}>Go Back</Text>
                         </TouchableOpacity>
-                        <TricepsScreen />
+
+                        <Text style={styles.padding}></Text>
+                        <DatabaseManager />
+                        <TricepsScreen onAnimateButton={animateButton}/>
                     </View>
                 );
             case 'Biceps':
@@ -96,6 +101,8 @@ function ChooseExerciseModal({ navigation }) {
         }
     }
 }
+
+
 
 const styles = StyleSheet.create({
     container: {
@@ -151,7 +158,10 @@ const styles = StyleSheet.create({
     text: {
         color: 'red',
         fontSize: '20',
-    }
+    },
+    padding: {
+        height: '1%',
+    },
 });
 
 export default ChooseExerciseModal;

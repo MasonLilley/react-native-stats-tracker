@@ -1,11 +1,13 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
-function TricepsScreen() {
+function TricepsScreen({ onAnimateButton }) {
     return (
       <View style={styles.container}>
-          <TouchableOpacity style={styles.button} onPress={() => console.log("yo")}>
-            <Text style={styles.buttonText}>Custom</Text>
+          <TouchableOpacity style={styles.button} onPress={() => {
+            onAnimateButton()
+          }}>
+            <Text style={styles.buttonText}>Database Exercise 1</Text>
           </TouchableOpacity>
       </View>
     );
