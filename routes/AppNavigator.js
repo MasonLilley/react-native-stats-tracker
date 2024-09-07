@@ -3,10 +3,8 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from '../screens/HomeScreen';
-import CreateWorkout from '../screens/CreateWorkout';
 import CreateWorkoutModal from '../screens/CreateWorkoutModal';
 import { DefaultTheme } from '@react-navigation/native';
-import WorkoutHeaderButtons from '../headers/CreateWorkoutHeaderButtons';
 import HomeHeaderButtons from '../headers/HomeHeaderButtons';
 import ChooseExerciseModal from '../screens/ChooseExerciseModal';
 import CreateWorkoutHeaderButtons from '../headers/CreateWorkoutHeaderButtons';
@@ -43,10 +41,6 @@ function RootStackScreen() {
           headerTitle: '',
         })}
         />
-
-        <RootStack.Screen name="CreateWorkout" component={CreateWorkout} options={{
-
-        }}/>
       </RootStack.Group>
 
       <RootStack.Group screenOptions={{ presentation: 'fullScreenModal'}}>

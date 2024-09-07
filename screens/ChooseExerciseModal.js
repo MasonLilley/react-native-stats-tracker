@@ -80,7 +80,7 @@ function ChooseExerciseModal({ navigation }) {
         switch (selectedExercise) {
             case 'Triceps':
                 return (
-                    <View>
+                    <View style={styles.exerciseScreen}>
                         <TouchableOpacity 
                         style={styles.button} 
                         onPress={() => animateButton()}>
@@ -94,18 +94,31 @@ function ChooseExerciseModal({ navigation }) {
                 );
             case 'Biceps':
                 return (
-                    <Text style={styles.menuText}>Biceps Exercises Content</Text>
-                );
+                    <View style={styles.exerciseScreen}>
+                        <TouchableOpacity 
+                        style={styles.button} 
+                        onPress={() => animateButton()}>
+                            <Text style={styles.buttonText}>Go Back</Text>
+                        </TouchableOpacity>
+
+                        <Text style={styles.padding}></Text>
+                        <Text>HELLO BICEPS</Text>
+                    </View>                );
             default:
                 return null; 
         }
     }
 }
 
-
-
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        alignSelf: 'center',
+        width: '100%',
+    },
+    exerciseScreen: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'flex-start',

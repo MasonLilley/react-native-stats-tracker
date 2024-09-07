@@ -22,12 +22,17 @@ const loadDatabse = async () => {
 
 export default function App() {
   const [dbLoaded, setDbLoaded] = useState(false);
+
   React.useEffect(() => {
-    loadDatabse().then(() => setDbLoaded(true)).catch((e) => console.error(e));
+    loadDatabse()
+    .then(() => setDbLoaded(true))
+    .catch((e) => console.error(e));
   }, []);
+
   if (!dbLoaded) {
     return (<DatabaseFallback />);
   }
+  
   return (
     <React.Suspense fallback={<DatabaseFallback />}>
       <SQLiteProvider databaseName='exerciseDB.db' useSuspense>
