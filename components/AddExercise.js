@@ -5,113 +5,97 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as FileSystem from 'expo-file-system'
 import { Asset } from 'expo-asset';
 
-async function database(array) {
-    console.log('ran');
-    
-
-    console.log('hi');
-    const statement = await db.executeAsync("SELECT * FROM sqlite_master");
-    console.log('got all tables!!');
-    // try {
-    //     console.log('trying.');
-    //     // let result = await statement.executeAsync({ 
-    //     //     $exercise_name: 'bbb', 
-    //     //     $reps: 101, 
-    //     //     $weight: 0, 
-    //     //     $date: '0', 
-    //     //     $note: 'none' });
-    // } finally {
-    //     console.log('hello result here:');
-    //     // console.log(statement);
-    //     // await statement.finalizeAsync();
-    // }
-}
-
 function AddExercise({ exercise, index }) {
+    const db = SQLite.useSQLiteContext();
     const placeholderColor = '#888';
     const [rows, setRows] = useState([{ reps: '', weight: '', notes: '' }]);
 
+    //DATABASE STUFF
+
+    async function getData() {
+        const result = await db.getAllAsync('SELECT * FROM Sets');
+        console.log(result);
+      }
+
+
+    //ROW STUFF
+
+    const addRow = () => {
+        setRows([...rows, { reps: '', weight: '', notes: '' }]);
+
+    };
+
+    const logRows = async () => {
+        getData();
+    };
+
+    const handleRepsChange = (input, rowIndex) => {
+        const intValue = input.replace(/[^0-9]/g, '');
+        const updatedRows = [...rows];
+        updatedRows[rowIndex].reps = intValue;
+        setRows(updatedRows);
+    };
+
+    const handleWeightChange = (input, rowIndex) => {
+        const floatValue = input.replace(/[^0-9.]/g, '');
+        const updatedRows = [...rows];
+        updatedRows[rowIndex].weight = floatValue;
+        setRows(updatedRows);
+    };
+
+    const handleNotesChange = (input, rowIndex) => {
+        const updatedRows = [...rows];
+        updatedRows[rowIndex].notes = input;
+        setRows(updatedRows);
+    };
 
 
 
+    return (
+        <View style={styles.exerciseBox}>
+            <View style={styles.topRow}>
+                <View>
+                    <Text style={styles.exerciseName}>{exercise[index + 1][1].name}</Text>
+                    <Text style={styles.exerciseNotes}>{exercise[index + 1][2].notes}</Text>
+                </View>
 
-const addRow = () => {
-    setRows([...rows, { reps: '', weight: '', notes: '' }]);
-
-};
-
-const logRows = async () => {
-
-    database(rows)
-};
-
-const handleRepsChange = (input, rowIndex) => {
-    const intValue = input.replace(/[^0-9]/g, '');
-    const updatedRows = [...rows];
-    updatedRows[rowIndex].reps = intValue;
-    setRows(updatedRows);
-};
-
-const handleWeightChange = (input, rowIndex) => {
-    const floatValue = input.replace(/[^0-9.]/g, '');
-    const updatedRows = [...rows];
-    updatedRows[rowIndex].weight = floatValue;
-    setRows(updatedRows);
-};
-
-const handleNotesChange = (input, rowIndex) => {
-    const updatedRows = [...rows];
-    updatedRows[rowIndex].notes = input;
-    setRows(updatedRows);
-};
-
-
-
-return (
-    <View style={styles.exerciseBox}>
-        <View style={styles.topRow}>
-            <View>
-                <Text style={styles.exerciseName}>{exercise[index + 1][1].name}</Text>
-                <Text style={styles.exerciseNotes}>{exercise[index + 1][2].notes}</Text>
+                <TouchableOpacity onPress={addRow} style={styles.trashIcon}>
+                    <Ionicons name="trash-outline" size={25} color="red" />
+                </TouchableOpacity>
             </View>
 
-            <TouchableOpacity onPress={addRow} style={styles.trashIcon}>
-                <Ionicons name="trash-outline" size={25} color="red" />
+        {rows.map((row, rowIndex) => (
+            <View key={rowIndex} style={styles.inputRow}>
+            <Text style={styles.placeholderText}>Reps</Text>
+            <TextInput
+                style={styles.input}
+                value={row.reps}
+                onChangeText={(input) => handleRepsChange(input, rowIndex)}
+                keyboardType="numeric" />
+            <Text style={styles.placeholderText}>Weight</Text>
+            <TextInput
+                style={styles.input}
+                value={row.weight}
+                onChangeText={(input) => handleWeightChange(input, rowIndex)}
+                keyboardType="decimal-pad" />
+            <Text style={styles.placeholderText}>Notes</Text>
+            <TextInput
+                style={styles.input}
+                value={row.notes}
+                onChangeText={(input) => handleNotesChange(input, rowIndex)} />
+            </View>
+        ))}
+
+        <View style={styles.lastRow}>
+            <TouchableOpacity onPress={addRow} style={styles.icon}>
+                <Ionicons name="barbell-outline" size={30} color="blue" />
             </TouchableOpacity>
         </View>
 
-    {rows.map((row, rowIndex) => (
-        <View key={rowIndex} style={styles.inputRow}>
-        <Text style={styles.placeholderText}>Reps</Text>
-        <TextInput
-            style={styles.input}
-            value={row.reps}
-            onChangeText={(input) => handleRepsChange(input, rowIndex)}
-            keyboardType="numeric" />
-        <Text style={styles.placeholderText}>Weight</Text>
-        <TextInput
-            style={styles.input}
-            value={row.weight}
-            onChangeText={(input) => handleWeightChange(input, rowIndex)}
-            keyboardType="decimal-pad" />
-        <Text style={styles.placeholderText}>Notes</Text>
-        <TextInput
-            style={styles.input}
-            value={row.notes}
-            onChangeText={(input) => handleNotesChange(input, rowIndex)} />
+        <Button title="Log Rows" onPress={logRows} color="blue" />
+
         </View>
-    ))}
-
-    <View style={styles.lastRow}>
-        <TouchableOpacity onPress={addRow} style={styles.icon}>
-            <Ionicons name="barbell-outline" size={30} color="blue" />
-        </TouchableOpacity>
-    </View>
-
-    <Button title="Log Rows" onPress={logRows} color="blue" />
-
-    </View>
-);
+    );
 }
 
 //
