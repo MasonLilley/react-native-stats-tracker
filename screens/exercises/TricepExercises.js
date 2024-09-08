@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { useSQLiteContext } from 'expo-sqlite';
 import React, { useState, useEffect } from 'react';
 import { ScrollView } from 'react-native';
@@ -6,6 +7,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 function TricepsScreen({ onAnimateButton }) {
   const [exercises, setExercises] = useState([]);
   const db = useSQLiteContext();
+  const navigation = useNavigation();
 
   async function getData() {
     const result = await db.getAllAsync('SELECT * FROM Exercises');
@@ -24,7 +26,9 @@ function TricepsScreen({ onAnimateButton }) {
       <View style={styles.container}>
         {exercises.length > 0 ? (
           exercises.map((exercise) => (
-            <TouchableOpacity key={exercise.id} style={styles.button}>
+            <TouchableOpacity key={exercise.id} style={styles.button} onPress={() => {
+              navigation.navigate('CreateWorkoutModal', {selectedExercise: exercise});
+            }}>
               <Text>{exercise.name}</Text>
             </TouchableOpacity>
           ))

@@ -12,7 +12,9 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "bundleIndentifier": "com.test.test",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.Workout"
     },
     "android": {
       "adaptiveIcon": {

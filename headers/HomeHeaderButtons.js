@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
     },
     rightContainer: {
       display: 'flex',
-      marginRight: '100',
     },
     centerText: {
       color: 'black',
