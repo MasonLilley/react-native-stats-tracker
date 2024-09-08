@@ -10,6 +10,10 @@ import ChooseExerciseModal from '../screens/ChooseExerciseModal';
 import CreateWorkoutHeaderButtons from '../headers/CreateWorkoutHeaderButtons';
 import ChooseExerciseButtons from '../headers/ChooseExerciseButtons';
 import TricepExercises from '../screens/exercises/TricepExercises';
+import { SQLiteProvider } from 'expo-sqlite';
+import * as SQLite from 'expo-sqlite';
+import { openDatabase } from 'react-native-sqlite-storage';
+
 
 
 const RootStack = createNativeStackNavigator();
@@ -28,6 +32,7 @@ const DarkTheme = {
 
 function RootStackScreen() {
   return (
+    // <SQLiteProvider databaseName='exerciseDB.db' assetSource={{ assetId: require('../assets/exerciseDB.db') }}>
     <NavigationContainer>
     <RootStack.Navigator>
       <RootStack.Group>
@@ -54,6 +59,9 @@ function RootStackScreen() {
                 title="Title Day/Text"
               />
           ),
+          headerStyle: {
+            backgroundColor: 'lightgrey',
+          },
         })}
         />
       </RootStack.Group>
@@ -80,6 +88,7 @@ function RootStackScreen() {
         </RootStack.Group>
     </RootStack.Navigator>
     </NavigationContainer>
+    // </SQLiteProvider>
   );
 }
 

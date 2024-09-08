@@ -1,72 +1,117 @@
+import * as SQLite from 'expo-sqlite';
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Button } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import * as FileSystem from 'expo-file-system'
+import { Asset } from 'expo-asset';
+
+async function database(array) {
+    console.log('ran');
+    
+
+    console.log('hi');
+    const statement = await db.executeAsync("SELECT * FROM sqlite_master");
+    console.log('got all tables!!');
+    // try {
+    //     console.log('trying.');
+    //     // let result = await statement.executeAsync({ 
+    //     //     $exercise_name: 'bbb', 
+    //     //     $reps: 101, 
+    //     //     $weight: 0, 
+    //     //     $date: '0', 
+    //     //     $note: 'none' });
+    // } finally {
+    //     console.log('hello result here:');
+    //     // console.log(statement);
+    //     // await statement.finalizeAsync();
+    // }
+}
 
 function AddExercise({ exercise, index }) {
-  const [rows, setRows] = useState([{ reps: '', weight: '', notes: '' }]);
+    const placeholderColor = '#888';
+    const [rows, setRows] = useState([{ reps: '', weight: '', notes: '' }]);
 
-  // Function to add a new row
-  const addRow = () => {
+
+
+
+
+const addRow = () => {
     setRows([...rows, { reps: '', weight: '', notes: '' }]);
-  };
 
-  // Function to handle changes in reps for a specific row
-  const handleRepsChange = (input, rowIndex) => {
+};
+
+const logRows = async () => {
+
+    database(rows)
+};
+
+const handleRepsChange = (input, rowIndex) => {
     const intValue = input.replace(/[^0-9]/g, '');
     const updatedRows = [...rows];
     updatedRows[rowIndex].reps = intValue;
     setRows(updatedRows);
-  };
+};
 
-  // Function to handle changes in weight for a specific row
-  const handleWeightChange = (input, rowIndex) => {
+const handleWeightChange = (input, rowIndex) => {
     const floatValue = input.replace(/[^0-9.]/g, '');
     const updatedRows = [...rows];
     updatedRows[rowIndex].weight = floatValue;
     setRows(updatedRows);
-  };
+};
 
-  // Function to handle changes in notes for a specific row
-  const handleNotesChange = (input, rowIndex) => {
+const handleNotesChange = (input, rowIndex) => {
     const updatedRows = [...rows];
     updatedRows[rowIndex].notes = input;
     setRows(updatedRows);
-  };
+};
 
-  return (
+
+
+return (
     <View style={styles.exerciseBox}>
-      <Text style={styles.exerciseName}>{exercise[index + 1][1].name}</Text>
-      <Text style={styles.exerciseNotes}>{exercise[index + 1][2].notes}</Text>
+        <View style={styles.topRow}>
+            <View>
+                <Text style={styles.exerciseName}>{exercise[index + 1][1].name}</Text>
+                <Text style={styles.exerciseNotes}>{exercise[index + 1][2].notes}</Text>
+            </View>
 
-      {rows.map((row, rowIndex) => (
+            <TouchableOpacity onPress={addRow} style={styles.trashIcon}>
+                <Ionicons name="trash-outline" size={25} color="red" />
+            </TouchableOpacity>
+        </View>
+
+    {rows.map((row, rowIndex) => (
         <View key={rowIndex} style={styles.inputRow}>
-          <TextInput
+        <Text style={styles.placeholderText}>Reps</Text>
+        <TextInput
             style={styles.input}
-            placeholder="Reps"
             value={row.reps}
             onChangeText={(input) => handleRepsChange(input, rowIndex)}
             keyboardType="numeric" />
-          <TextInput
+        <Text style={styles.placeholderText}>Weight</Text>
+        <TextInput
             style={styles.input}
-            placeholder="Weight"
             value={row.weight}
             onChangeText={(input) => handleWeightChange(input, rowIndex)}
             keyboardType="decimal-pad" />
-          <TextInput
+        <Text style={styles.placeholderText}>Notes</Text>
+        <TextInput
             style={styles.input}
-            placeholder="Notes"
             value={row.notes}
             onChangeText={(input) => handleNotesChange(input, rowIndex)} />
         </View>
-      ))}
+    ))}
 
-      <View style={styles.lastRow}>
+    <View style={styles.lastRow}>
         <TouchableOpacity onPress={addRow} style={styles.icon}>
             <Ionicons name="barbell-outline" size={30} color="blue" />
         </TouchableOpacity>
-      </View>
     </View>
-  );
+
+    <Button title="Log Rows" onPress={logRows} color="blue" />
+
+    </View>
+);
 }
 
 //
@@ -74,51 +119,73 @@ function AddExercise({ exercise, index }) {
 // borderWidth: 1,
 //
 const styles = StyleSheet.create({
-  exerciseBox: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 8,
+    exerciseBox: {
+    backgroundColor: '#1e1e1e',
+    borderRadius: 12,
     padding: 16,
     marginVertical: 8,
     width: '90%',
     alignSelf: 'center',
-  },
-  exerciseName: {
-    fontSize: 18,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+    },
+    exerciseName: {
+    fontSize: 20,
     fontWeight: 'bold',
-  },
-  exerciseNotes: {
-    fontSize: 12,
-    color: '#888',
+    color: '#f0f0f0',
+    },
+    exerciseNotes: {
+    fontSize: 14,
+    color: '#b0b0b0',
     marginBottom: 10,
-  },
-  inputRow: {
+    },
+    inputRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '90%',
     marginBottom: 12,
-  },
-  input: {
-    backgroundColor: '#fff',
+    },
+    input: {
+    backgroundColor: '#333',
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#444',
     borderRadius: 8,
-    padding: 8,
-    width: '30%',
+    padding: 10,
+    width: '20%',
     textAlign: 'center',
-  },
-  icon: {
+    color: '#ffffff',
+    },
+    icon: {
     marginLeft: 0,
-
     width: 35,
-  },
-  lastRow: {
-    borderColor: 'red',
+    tintColor: '#f0f0f0',
+    },
+    lastRow: {
+    borderColor: '#444',
     borderWidth: 1,
-    width: '90%',
-    backgroundColor: 'grey',
-    borderRadius: 8,
-  }
+    width: '101%',
+    backgroundColor: '#2e2e2e',
+    borderRadius: 12,
+    padding: 12,
+    },
+    placeholderText: {
+        color: '#888',
+        paddingLeft: 7,
+        paddingRight: 10,
+    },
+    topRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    trashIcon: {
+        margin: 0,
+        padding: 0,
+    }
 });
+
 
 export default AddExercise;
