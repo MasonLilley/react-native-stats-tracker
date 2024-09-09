@@ -5,28 +5,52 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as FileSystem from 'expo-file-system'
 import { Asset } from 'expo-asset';
 
+// to clear table w/o breaking table structure:
+// let result = await db.execAsync("DELETE FROM Sets");
+
 function AddExercise({ exercise, index }) {
     const db = SQLite.useSQLiteContext();
     const placeholderColor = '#888';
-    const [rows, setRows] = useState([{ reps: '', weight: '', notes: '' }]);
+    const [rows, setRows] = useState([{ reps: '', weight: '', notes: '', muscle: 'tricep' }]);
 
     //DATABASE STUFF
 
-    async function getData() {
-        const result = await db.getAllAsync('SELECT * FROM Sets');
-        console.log(result);
+    async function addToDatabase(row) {
+        const statement = await db.prepareAsync("INSERT INTO Sets (exercise_name, reps, weight, date, note, muscle) VALUES ($name, $reps, $weight, $date, $note, $muscle)");
+
+        const sets = await db.getAllAsync("SELECT * FROM Sets");
+        console.log("sets before: ",sets);
+
+        try {
+            let result = await statement.executeAsync({ 
+                $name: 'test',
+                $reps: row.reps, 
+                $weight: row.weight, 
+                $date: '2024-09-08', 
+                $note: row.notes,
+                $muscle: row.muscle});
+            // console.log("result:",result);
+        } catch(e) {
+            console.log(e);
+        } finally {
+            await statement.finalizeAsync();
+            const sets = await db.getAllAsync("SELECT * FROM Sets");
+            console.log("finalized async, sets now: ", sets);
+        }
       }
 
 
     //ROW STUFF
 
     const addRow = () => {
-        setRows([...rows, { reps: '', weight: '', notes: '' }]);
+        setRows([...rows, { name: 'test', reps: '', weight: '', notes: '', muscle: 'tricep' }]);
 
     };
 
     const logRows = async () => {
-        getData();
+        for (const row of rows) {
+            await addToDatabase(row);
+        }
     };
 
     const handleRepsChange = (input, rowIndex) => {
@@ -93,7 +117,10 @@ function AddExercise({ exercise, index }) {
         </View>
 
         <Button title="Log Rows" onPress={logRows} color="blue" />
-
+        <Button title="DELETE SETS" onPress={async () => {
+            let result = await db.execAsync("DELETE FROM Sets");
+            console.log("Deleted Sets");
+            }} color="red"/>
         </View>
     );
 }
