@@ -1,5 +1,7 @@
 // AppNavigator.js
 import React from 'react';
+
+import { LogBox } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from '../screens/HomeScreen';
@@ -11,12 +13,16 @@ import CreateWorkoutHeaderButtons from '../headers/CreateWorkoutHeaderButtons';
 import ChooseExerciseButtons from '../headers/ChooseExerciseButtons';
 import TricepExercises from '../screens/exercises/TricepExercises';
 import { SQLiteProvider } from 'expo-sqlite';
-import * as SQLite from 'expo-sqlite';
-import { openDatabase } from 'react-native-sqlite-storage';
+import EditExerciseModal from '../components/EditExerciseModal';
+import EditNoteModal from '../components/EditNoteModal';
 
 
 
 const RootStack = createNativeStackNavigator();
+
+LogBox.ignoreLogs([
+  'Non-serializable values were found in the navigation state',
+]);
 
 const DarkTheme = {
   ...DefaultTheme,

@@ -36,15 +36,22 @@ function CreateWorkoutModal({ navigation }) {
     ]);    
   };
 
+  const editNote = (id) => {
+    console.log('tryna edit my notee')
+
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.buttonContainer}>
         {exercises.map((exercise, index) => (
           <AddExercise
+            navigation={navigation}
             key={exercise.id}
             exercise={exercise}
             index={index}
             deleteExercise={() => deleteExercise(exercise.id)}
+            editNote={() => editNote(exercise.id)}
           />
         ))}
 

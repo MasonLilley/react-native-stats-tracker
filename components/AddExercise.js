@@ -1,28 +1,17 @@
 import * as SQLite from 'expo-sqlite';
+import { useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, Button, Alert } from 'react-native';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Button, Alert, Pressable, Modal } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Dropdown } from 'react-native-element-dropdown'; // <-- Import Dropdown component
+import EditExerciseModal from './EditExerciseModal';
 
-function AddExercise({ exercise, index, deleteExercise }) {
+function AddExercise({ navigation, exercise, index, deleteExercise, editNote }) {
     const db = SQLite.useSQLiteContext();
     const placeholderColor = '#888';
     const [rows, setRows] = useState([{ reps: '', weight: '', notes: '', muscle: '' }]);
     const [focusedInputIndex, setFocusedInputIndex] = useState(null);
-    const [selectedDropdown, setSelectedDropdown] = useState("");  // <-- State for dropdown
-
-    // Dropdown data for muscles or other options
-    const dropdownData = [
-        { label: 'Tricep', value: 'Tricep' },
-        { label: 'Bicep', value: 'Bicep' },
-        { label: 'Shoulder', value: 'Shoulder' },
-        { label: 'Leg', value: 'Leg' },
-        { label: 'Chest', value: 'Chest' },
-        { label: 'Back', value: 'Back' },
-        { label: 'Abs', value: 'Abs' },
-    ];
-
-    //DATABASE STUFF
+    const [modalVisible, setModalVisible] = useState(false);
 
     async function addToDatabase(row) {
         const statement = await db.prepareAsync("INSERT INTO Sets (exercise_name, reps, weight, date, note, muscle) VALUES ($name, $reps, $weight, $date, $note, $muscle)");
@@ -37,7 +26,7 @@ function AddExercise({ exercise, index, deleteExercise }) {
                 $weight: row.weight, 
                 $date: '2024-09-08', 
                 $note: row.notes,
-                $muscle: row.muscle || selectedDropdown  // Using dropdown value if muscle is not provided
+                $muscle: row.muscle
             });
         } catch(e) {
             console.log(e);
@@ -51,7 +40,7 @@ function AddExercise({ exercise, index, deleteExercise }) {
     //ROW STUFF
 
     const addRow = () => {
-        setRows([...rows, { name: 'test', reps: '', weight: '', notes: '', muscle: selectedDropdown }]);
+        setRows([...rows, { name: 'test', reps: '', weight: '', notes: '', muscle: exercise.muscle }]);
     };
 
     const handleFocus = (index) => {
@@ -112,6 +101,17 @@ function AddExercise({ exercise, index, deleteExercise }) {
                 </TouchableOpacity>
             </View>
 
+            <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert('Modal has been closed.');
+          setModalVisible(false);
+        }}>
+            <EditExerciseModal deleteExercise={deleteExercise} editNote={editNote}></EditExerciseModal>
+      </Modal>
+
             {rows.map((row, rowIndex) => (
                 <View key={rowIndex} style={[
                     styles.inputRow,
@@ -119,13 +119,13 @@ function AddExercise({ exercise, index, deleteExercise }) {
                 ]}>
                     <View style={styles.inputBox}>
                         <Text style={styles.placeholderText}>Reps</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={row.reps}
-                            onChangeText={(input) => handleRepsChange(input, rowIndex)}
-                            onFocus={() => handleFocus(rowIndex)}
-                            onBlur={handleBlur}
-                            keyboardType="numeric" />
+                            <TextInput
+                                style={styles.input}
+                                value={row.reps}
+                                onChangeText={(input) => handleRepsChange(input, rowIndex)}
+                                onFocus={() => handleFocus(rowIndex)}
+                                onBlur={handleBlur}
+                                keyboardType="numeric" />
                     </View>
 
                     <View style={styles.inputBox}>
@@ -156,7 +156,7 @@ function AddExercise({ exercise, index, deleteExercise }) {
                 <TouchableOpacity onPress={addRow} style={styles.icon}>
                     <Ionicons name="barbell-outline" size={25} color="lightblue" />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={addRow} style={styles.icon}>
+                <TouchableOpacity onPress={() => {setModalVisible(true)}} style={styles.icon}>
                     <Ionicons name="ellipsis-horizontal" size={25} color="lightblue" />
                 </TouchableOpacity>
             </View>
@@ -167,6 +167,12 @@ function AddExercise({ exercise, index, deleteExercise }) {
                 console.log("Deleted Sets");
             }} color="red"/>
         </View>
+    );
+}
+
+const renderModal = () => {
+    return (
+        <View></View>
     );
 }
 
@@ -234,7 +240,7 @@ const styles = StyleSheet.create({
         borderColor: '#444',
         borderWidth: 1,
         width: '100%',
-        height: 70,
+        height: 50,
         backgroundColor: '#2e2e2e',
         borderRadius: 12,
         padding: 12,
@@ -258,6 +264,54 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    testOpacity: {
+        width: '100%',
+        alignItems: 'center'
+    },
+    modalContent: {
+        backgroundColor: 'red',
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 22,
+      },
+      modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+      },
+      button: {
+        borderRadius: 20,
+        padding: 10,
+        elevation: 2,
+      },
+      buttonOpen: {
+        backgroundColor: '#F194FF',
+      },
+      buttonClose: {
+        backgroundColor: '#2196F3',
+      },
+      textStyle: {
+        color: 'white',
+        fontWeight: 'bold',
+        textAlign: 'center',
+      },
+      modalText: {
+        marginBottom: 15,
+        textAlign: 'center',
+      },
 });
 
 export default AddExercise;
