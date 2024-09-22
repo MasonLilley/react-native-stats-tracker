@@ -85,6 +85,19 @@ function RootStackScreen() {
         />
       </RootStack.Group>
 
+      <RootStack.Group screenOptions={{ presentation: 'modal'}}>
+        <RootStack.Screen name="EditNoteModal" component={EditNoteModal} options={({ navigation }) => ({
+            headerLeft: () => (
+              <ChooseExerciseButtons
+                onLeft1ButtonPress={() => navigation.goBack()}
+                onRight2ButtonPress={() => navigation.navigate('')}
+                title="Edit Note Modal"
+              />
+          ),
+        })}
+        />
+      </RootStack.Group>
+
       <RootStack.Group screenOptions={{ presentation: 'card' }}>
           <RootStack.Screen
             name="TricepExercises"

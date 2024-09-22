@@ -1,61 +1,88 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView, Text } from 'react-native';
-import { TextInput } from 'react-native-paper';
+import { View, StyleSheet, ScrollView, Text, TextInput, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const EditNoteModal = ({ navigation }) => {
+const EditNoteModal = ({ cancelEdit, exercise }) => {
     return (
         <View style={styles.modalContainer}>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <Text>edit note here</Text>
-                <TextInput>hi</TextInput>
-            </ScrollView>
+                <TextInput
+                    style={styles.input}
+                    placeholder="Write your note here..."
+                    placeholderTextColor="#7d7d7d"
+                    multiline
+                />
+                <View style={styles.buttonRow}>
+                    <TouchableOpacity style={styles.confirmButton}>
+                        <Text style={styles.confirmButtonText}>Confirm Note</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.cancelButton}>
+                        <Text style={styles.cancelButtonText}>Cancel Edit</Text>
+                    </TouchableOpacity>
+                </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
     modalContainer: {
-        height: '100%',
-        width: '100%',
-        flex: 1,
-        backgroundColor: 'red',
+        margin: 20,
+        backgroundColor: '#1e1e1e',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.7,
+        shadowRadius: 8,
+        elevation: 10,
     },
     scrollContainer: {
-        padding: 20,
-    },
-    topRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: 10,
-        height: 100,
         width: '100%',
-        borderWidth: 10,
-        borderColor: 'lightgrey',
+    },
+    input: {
+        backgroundColor: '#2c2c2c',
+        color: 'white',
+        fontSize: 18,
+        padding: 15,
         borderRadius: 10,
+        marginBottom: 20,
+        borderColor: '#444',
+        borderWidth: 1,
+        height: 150,
+        minWidth: 300,
     },
-    topButton: {
+    confirmButton: {
+        backgroundColor: '#4CAF50',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderRadius: 10,
         alignItems: 'center',
-        paddingBottom: 10,
-        paddingTop: 5,
+        justifyContent: 'center',
+        marginTop: 20,
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginTop: 16,
-        marginLeft: 16,
-        color: 'white',
-    },
-    mainOption: {
+    cancelButton: {
+        backgroundColor: 'red',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        borderRadius: 10,
         alignItems: 'center',
-        width: '30%',
+        justifyContent: 'center',
+        marginTop: 20,
     },
-    mainOptionText: {
+    confirmButtonText: {
         color: 'white',
-        fontSize: 15,
-        fontFamily: 'Georgia',
+        fontSize: 18,
+        fontWeight: '600',
     },
+    cancelButtonText: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: '600',
+    },
+    buttonRow: {
+        flexDirection: 'row',
+        gap: 10,
+    }
 });
 
 export default EditNoteModal;

@@ -1,12 +1,10 @@
 import * as SQLite from 'expo-sqlite';
-import { useRoute } from '@react-navigation/native';
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Button, Alert, Pressable, Modal } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Dropdown } from 'react-native-element-dropdown'; // <-- Import Dropdown component
 import EditExerciseModal from './EditExerciseModal';
 
-function AddExercise({ navigation, exercise, index, deleteExercise, editNote }) {
+function AddExercise({ exercise, deleteExercise, editNote }) {
     const db = SQLite.useSQLiteContext();
     const placeholderColor = '#888';
     const [rows, setRows] = useState([{ reps: '', weight: '', notes: '', muscle: '' }]);
@@ -88,6 +86,10 @@ function AddExercise({ navigation, exercise, index, deleteExercise, editNote }) 
         setSelectedDropdown(value);
     };
 
+    const closeModal = () => {
+        setModalVisible(false);
+    }
+
     return (
         <View style={styles.exerciseBox}>
             <View style={styles.topRow}>
@@ -96,21 +98,25 @@ function AddExercise({ navigation, exercise, index, deleteExercise, editNote }) 
                     <Text style={styles.exerciseNotes}>{exercise.notes}</Text>
                 </View>
 
-                <TouchableOpacity onPress={deleteExercise} style={styles.trashIcon}>
+                <TouchableOpacity onPress={() => {
+                    setModalVisible(false);
+                    deleteExercise();
+                }} style={styles.trashIcon}>
                     <Ionicons name="trash-outline" size={25} color="red" />
                 </TouchableOpacity>
             </View>
 
-            <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(false);
-        }}>
-            <EditExerciseModal deleteExercise={deleteExercise} editNote={editNote}></EditExerciseModal>
-      </Modal>
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}>
+            <View style={styles.centeredView}>
+                <View style={styles.modalContent}>
+                    <EditExerciseModal deleteExercise={deleteExercise} editNote={editNote} closeModal={closeModal} logRows={logRows}/>
+                </View>
+            </View>
+            <Button onPress={() => { setModalVisible(false) }} title='temp close' />
+        </Modal>
 
             {rows.map((row, rowIndex) => (
                 <View key={rowIndex} style={[
@@ -167,12 +173,6 @@ function AddExercise({ navigation, exercise, index, deleteExercise, editNote }) 
                 console.log("Deleted Sets");
             }} color="red"/>
         </View>
-    );
-}
-
-const renderModal = () => {
-    return (
-        <View></View>
     );
 }
 
@@ -268,50 +268,23 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center'
     },
-    modalContent: {
-        backgroundColor: 'red',
-    },
     centeredView: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 22,
-      },
-      modalView: {
-        margin: 20,
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 35,
-        alignItems: 'center',
+    },
+    modalContent: {
+        width: '90%',
+        padding: 0,
+        backgroundColor: '#1e1e1e',
+        borderRadius: 10,
         shadowColor: '#000',
-        shadowOffset: {
-          width: 0,
-          height: 2,
-        },
+        shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        elevation: 5,
-      },
-      button: {
-        borderRadius: 20,
-        padding: 10,
-        elevation: 2,
-      },
-      buttonOpen: {
-        backgroundColor: '#F194FF',
-      },
-      buttonClose: {
-        backgroundColor: '#2196F3',
-      },
-      textStyle: {
-        color: 'white',
-        fontWeight: 'bold',
-        textAlign: 'center',
-      },
-      modalText: {
-        marginBottom: 15,
-        textAlign: 'center',
-      },
+        backgroundColor: 'lightblue',
+    },
+    // .
 });
 
 export default AddExercise;
