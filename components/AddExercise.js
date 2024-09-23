@@ -1,8 +1,9 @@
 import * as SQLite from 'expo-sqlite';
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, StyleSheet, Text, TextInput, TouchableOpacity, Button, Alert, Pressable, Modal } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import EditExerciseModal from './EditExerciseModal';
+import { TouchableWithoutFeedback } from 'react-native-web';
 
 function AddExercise({ exercise, deleteExercise, editNote }) {
     const db = SQLite.useSQLiteContext();
@@ -10,7 +11,10 @@ function AddExercise({ exercise, deleteExercise, editNote }) {
     const [rows, setRows] = useState([{ reps: '', weight: '', notes: '', muscle: '' }]);
     const [focusedInputIndex, setFocusedInputIndex] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
-
+    const repsRefs = useRef([]);
+    const weightRefs = useRef([]);
+    const notesRefs = useRef([]);
+    
     async function addToDatabase(row) {
         const statement = await db.prepareAsync("INSERT INTO Sets (exercise_name, reps, weight, date, note, muscle) VALUES ($name, $reps, $weight, $date, $note, $muscle)");
 
@@ -90,6 +94,11 @@ function AddExercise({ exercise, deleteExercise, editNote }) {
         setModalVisible(false);
     }
 
+    const deleteSets = async () => {
+        let result = await db.execAsync("DELETE FROM Sets");
+        console.log("Deleted Sets");
+    }
+
     return (
         <View style={styles.exerciseBox}>
             <View style={styles.topRow}>
@@ -112,7 +121,7 @@ function AddExercise({ exercise, deleteExercise, editNote }) {
             visible={modalVisible}>
             <View style={styles.centeredView}>
                 <View style={styles.modalContent}>
-                    <EditExerciseModal deleteExercise={deleteExercise} editNote={editNote} closeModal={closeModal} logRows={logRows}/>
+                    <EditExerciseModal deleteExercise={deleteExercise} editNote={editNote} closeModal={closeModal} logRows={logRows} deleteSets={deleteSets}/>
                 </View>
             </View>
             <Button onPress={() => { setModalVisible(false) }} title='temp close' />
@@ -124,36 +133,45 @@ function AddExercise({ exercise, deleteExercise, editNote }) {
                     focusedInputIndex === rowIndex && styles.focusedInputRow,
                 ]}>
                     <View style={styles.inputBox}>
+                    <Pressable style={styles.pressable} onPress={() => repsRefs.current[rowIndex].focus()}>
                         <Text style={styles.placeholderText}>Reps</Text>
                             <TextInput
+                                ref={el => repsRefs.current[rowIndex] = el}
                                 style={styles.input}
                                 value={row.reps}
                                 onChangeText={(input) => handleRepsChange(input, rowIndex)}
                                 onFocus={() => handleFocus(rowIndex)}
                                 onBlur={handleBlur}
                                 keyboardType="numeric" />
+                        </Pressable>
                     </View>
 
                     <View style={styles.inputBox}>
+                    <Pressable style={styles.pressable} onPress={() => weightRefs.current[rowIndex].focus()}>
                         <Text style={styles.placeholderText}>Weight</Text>
                         <TextInput
+                            ref={el => weightRefs.current[rowIndex] = el}
                             style={styles.input}
                             value={row.weight}
                             onChangeText={(input) => handleWeightChange(input, rowIndex)}
                             onFocus={() => handleFocus(rowIndex)}
                             onBlur={handleBlur}
                             keyboardType="decimal-pad" />
+                        </Pressable>
                     </View>
 
                     <View style={styles.inputBox}>
-                        <Text style={styles.placeholderText}>Notes</Text>
-                        <TextInput
-                            style={styles.input}
-                            value={row.notes}
-                            onChangeText={(input) => handleNotesChange(input, rowIndex)}
-                            onFocus={() => handleFocus(rowIndex)}
-                            onBlur={handleBlur}
-                        />
+                        <Pressable style={styles.pressable} onPress={() => notesRefs.current[rowIndex].focus()}>
+                            <Text style={styles.placeholderText}>Notes</Text>
+                            <TextInput
+                                ref={el => notesRefs.current[rowIndex] = el}
+                                style={styles.input}
+                                value={row.notes}
+                                onChangeText={(input) => handleNotesChange(input, rowIndex)}
+                                onFocus={() => handleFocus(rowIndex)}
+                                onBlur={handleBlur}
+                            />
+                        </Pressable>
                     </View>
                 </View>
             ))}
@@ -166,12 +184,6 @@ function AddExercise({ exercise, deleteExercise, editNote }) {
                     <Ionicons name="ellipsis-horizontal" size={25} color="lightblue" />
                 </TouchableOpacity>
             </View>
-
-            <Button title="Log Rows" onPress={logRows} color="blue" />
-            <Button title="DELETE SETS" onPress={async () => {
-                let result = await db.execAsync("DELETE FROM Sets");
-                console.log("Deleted Sets");
-            }} color="red"/>
         </View>
     );
 }
@@ -283,6 +295,11 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         backgroundColor: 'lightblue',
+    },
+    pressable: {
+        width: '100%',
+        alignItems: 'center',
+
     },
     // .
 });

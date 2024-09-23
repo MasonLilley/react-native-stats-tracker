@@ -3,7 +3,7 @@ import React from 'react';
 import { View, StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const EditExerciseModal = ({ navigation, deleteExercise, editNote, closeModal, logRows }) => {
+const EditExerciseModal = ({ navigation, deleteExercise, editNote, closeModal, logRows, deleteSets }) => {
 
     const handleDelete = () => {
         deleteExercise();
@@ -47,9 +47,9 @@ const EditExerciseModal = ({ navigation, deleteExercise, editNote, closeModal, l
                         <Text style={styles.listText}>Log Rows</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.listElement}>
+                    <TouchableOpacity style={styles.listElement} onPress={deleteSets}>
                         <Ionicons name="save-sharp" size={24} color='#00A5E0'/>
-                        <Text style={styles.listText}>Log Rows</Text>
+                        <Text style={styles.listText}>Delete Sets</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.listElement}>

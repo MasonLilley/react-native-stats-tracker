@@ -2,19 +2,13 @@ import { useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, Button, ScrollView, Alert, Modal, Text } from 'react-native';
 import AddExercise from '../components/AddExercise';
-import EditNoteModal from '../components/EditNoteModal';
-import { TurboModuleRegistry } from 'react-native';
+import * as SQLite from 'expo-sqlite';
 
 function CreateWorkoutModal({ navigation }) {
+  const db = SQLite.useSQLiteContext();
   const route = useRoute();
   const [exercises, setExercises] = useState([]);
-  const [modalVisible, setModalVisible] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState(null);
-
-
-  useEffect(() => {
-    console.log('Modal visibility changed:', modalVisible);
-  }, [modalVisible]);
 
   useEffect(() => {
     console.log(route.params?.selectedExercise);
@@ -29,18 +23,34 @@ function CreateWorkoutModal({ navigation }) {
     }
   }, [route.params?.selectedExercise]);
 
-  const updateExerciseNote = (note) => {
-    console.log('new note to be applied to database :),',note);
-  }
+  const updateExerciseNote = async (note, exerciseName) => {
+    console.log('Changing', exerciseName, "'s note to:", note);
+    
+    const allRows = await db.getAllAsync('SELECT * FROM Exercises WHERE name = ?', exerciseName);
+    console.log('Before:', allRows);
+    
+    try {
+      const result = await db.runAsync('UPDATE Exercises SET notes = ? WHERE name = ?', [note, exerciseName]);
+
+        setExercises(prevExercises => 
+          prevExercises.map(exercise => 
+              exercise.name === exerciseName ? { ...exercise, notes: note } : exercise
+          )
+      );
+    } catch (error) {
+        console.error('Error updating note:', error);
+    }    
+    const allRowsAfter = await db.getAllAsync('SELECT * FROM Exercises WHERE name = ?', [exerciseName]);
+    console.log('After:', allRowsAfter);
+  };
   
+
   const deleteExercise = (id) => {
     Alert.alert('Delete Exercise?', 'Are you sure you want to delete this exercise? This cannot be recovered.', [
       {
         text: 'Cancel',
         onPress: () => {
-          console.log('cancelled delete');
-          navigation.navigate('EditNoteModal');
-          toggleModal();
+          console.log('cancelled delete');;
         },
         style: 'cancel'
       },
@@ -55,15 +65,21 @@ function CreateWorkoutModal({ navigation }) {
 
   const editNote = (id) => {
     const exerciseToEdit = exercises.find((exercise) => exercise.id === id);
-    setSelectedExercise(exerciseToEdit);
-    navigation.navigate('EditNoteModal')
-    setModalVisible(true);
-  }
-
-  const toggleModal = () => {
-    console.log('toggling modalvisible!');
-    setModalVisible(!modalVisible);
-  }
+    console.log("EXERCISETOEDIT:",exerciseToEdit);
+    console.log("NAME:", exerciseToEdit.name);
+    const exerciseName = exerciseToEdit.name;
+    
+    navigation.navigate('EditNoteModal', {
+      exerciseName,
+      onConfirm: (newNote) => {
+        navigation.goBack();
+        updateExerciseNote(newNote, exerciseName);
+      },
+      cancelEdit: () => {
+        navigation.goBack();
+      },
+    });
+  };
 
   return (
     <View style={styles.container}>
@@ -78,18 +94,6 @@ function CreateWorkoutModal({ navigation }) {
             editNote={() => editNote(exercise.id)}
           />
         ))}
-
-        <Modal
-            animationType="slide"
-            transparent={true}
-            visible={modalVisible}>
-            <View style={styles.centeredView}>
-                <View style={styles.modalContent}>
-                  <EditNoteModal closeModal={toggleModal} exercise={selectedExercise}></EditNoteModal>
-                </View>
-            </View>
-            <Button onPress={() => { setModalVisible(false) }} title='temp close' />
-        </Modal>
 
         <Button
           title="Add Dummy Exercise"

@@ -1,22 +1,42 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView, Text, TextInput, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useRoute } from '@react-navigation/native';
 
-const EditNoteModal = ({ cancelEdit, exercise }) => {
+const EditNoteModal = ({ }) => {
+    const route = useRoute();
+    const [note, setNote] = useState('');
+
+    const handleConfirmNote = () => {
+        if (route.params && route.params.onConfirm) {
+            route.params.onConfirm(note);
+        }
+    };
+
+    const handleNoteChange = (input) => {
+        setNote(input);
+    };
+    
+    const closeModal = () => {
+        route.params.cancelEdit();
+    }
+
     return (
         <View style={styles.modalContainer}>
                 <TextInput
                     style={styles.input}
                     placeholder="Write your note here..."
                     placeholderTextColor="#7d7d7d"
+                    onChangeText={(input) => handleNoteChange(input)}
                     multiline
                 />
                 <View style={styles.buttonRow}>
-                    <TouchableOpacity style={styles.confirmButton}>
-                        <Text style={styles.confirmButtonText}>Confirm Note</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.cancelButton}>
+                    <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
                         <Text style={styles.cancelButtonText}>Cancel Edit</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.confirmButton} onPress={handleConfirmNote}>
+                        <Text style={styles.confirmButtonText}>Confirm Note</Text>
                     </TouchableOpacity>
                 </View>
         </View>

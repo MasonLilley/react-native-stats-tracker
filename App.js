@@ -33,6 +33,15 @@ export default function App() {
     return (<DatabaseFallback />);
   }
   
+  const originalWarn = console.warn;
+
+  console.warn = (message) => {
+    if (message.includes('Non-serializable values were found in the navigation state. Check:')) {
+      return;
+    }
+    originalWarn(message);
+  };
+
   return (
     <React.Suspense fallback={<DatabaseFallback />}>
       <SQLiteProvider databaseName='exerciseDB.db' useSuspense>
