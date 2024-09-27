@@ -16,10 +16,9 @@ const EditExerciseModal = ({ navigation, deleteExercise, editNote, closeModal, l
     return (
         <View style={styles.modalContainer}>
             <TouchableOpacity style={styles.closeButton} onPress={() => {closeModal();}}>
-                <Ionicons name="close" size={20}/>
-                <Text styles={styles.closeButtonText}>CLOSE MODAL</Text>
+                <Ionicons name="close" size={25}/>
             </TouchableOpacity>
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
+            <ScrollView contentContainerStyle={styles.scrollContainer} scrollEnabled={false}>
                 <View style={styles.topRow}>
                     <View style={styles.mainOption}>
                         <TouchableOpacity style={styles.topButton} onPress={handleLog}>
@@ -48,13 +47,13 @@ const EditExerciseModal = ({ navigation, deleteExercise, editNote, closeModal, l
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.listElement} onPress={deleteSets}>
-                        <Ionicons name="save-sharp" size={24} color='#00A5E0'/>
+                        <Ionicons name="color-wand-sharp" size={24} color='red'/>
                         <Text style={styles.listText}>Delete Sets</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.listElement}>
-                        <Ionicons name="save-sharp" size={24} color='#00A5E0'/>
-                        <Text style={styles.listText}>Log Rows</Text>
+                        <Ionicons name="apps" size={24} color='#00A5E0'/>
+                        <Text style={styles.listText}>Placeholder</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
@@ -66,14 +65,13 @@ const styles = StyleSheet.create({
     modalContainer: {
         margin: 20,
         backgroundColor: '#1e1e1e', // Dark background
-        borderRadius: 20,
-        padding: 35,
+        borderRadius: 10,
+        paddingTop: 10,
         alignItems: 'center',
         shadowColor: '#000', // Dark shadow
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.7,
         shadowRadius: 8,
-        elevation: 10,
     },
     scrollContainer: {
         padding: 20,
@@ -83,11 +81,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: 10,
-        height: 100,
-        width: '100%',
+        height: 80,
+        width: 300,
         alignSelf: 'center',
-        borderWidth: 2,
-        borderColor: 'lightblue',
         borderRadius: 10,
         backgroundColor: '#2a2a2a',
         marginBottom: 10,
@@ -104,45 +100,40 @@ const styles = StyleSheet.create({
     mainOptionText: {
         color: '#f0f0f0', // Light font color for dark mode
         fontSize: 15,
-        fontFamily: 'Georgia',
     },
     listElement: {
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10,
-        marginLeft: 10,
+        // marginLeft: 10,
         padding: 10,
         borderRadius: 5,
-        backgroundColor: '#333', // Darker background for list elements
+        backgroundColor: '#333',
+        width: '100%',
     },
     itemList: {
-        backgroundColor: '#2a2a2a', // Darker background for the list container
+        backgroundColor: '#2a2a2a',
         borderRadius: 5,
         padding: 5,
         gap: 5,
+        width: '100%',
     },
     listText: {
         fontSize: 20,
-        fontFamily: 'Times New Roman',
         color: '#f0f0f0',
     },
     closeButton: {
         flexDirection: 'row',
         position: 'absolute',
-        top: 10,
-        left: 34,
-        width: '100%',
+        top: -10,
+        left: 310,
         height: 40,
         borderRadius: 20,
         backgroundColor: 'red',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: 20,
-    },
-    closeButtonText: {
-        fontSize: 20,
-        fontFamily: "Times New Roman",
-        color: '#f0f0f0',
+        gap: 5,
+        width: 50,
     },
 });
 

@@ -114,7 +114,7 @@ function CreateWorkoutModal({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'gray',
+    backgroundColor: '#333333',
     height: '100%',
   },
   buttonContainer: {

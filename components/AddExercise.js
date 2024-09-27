@@ -133,7 +133,7 @@ function AddExercise({ exercise, deleteExercise, editNote }) {
                     focusedInputIndex === rowIndex && styles.focusedInputRow,
                 ]}>
                     <View style={styles.inputBox}>
-                    <Pressable style={styles.pressable} onPress={() => repsRefs.current[rowIndex].focus()}>
+                    <Pressable style={styles.pressable} onPressIn={() => repsRefs.current[rowIndex].focus()} onPress={() => {}}                    >
                         <Text style={styles.placeholderText}>Reps</Text>
                             <TextInput
                                 ref={el => repsRefs.current[rowIndex] = el}
@@ -147,7 +147,7 @@ function AddExercise({ exercise, deleteExercise, editNote }) {
                     </View>
 
                     <View style={styles.inputBox}>
-                    <Pressable style={styles.pressable} onPress={() => weightRefs.current[rowIndex].focus()}>
+                    <Pressable style={styles.pressable} onPressIn={() => weightRefs.current[rowIndex].focus()} onPress={() => {}}>
                         <Text style={styles.placeholderText}>Weight</Text>
                         <TextInput
                             ref={el => weightRefs.current[rowIndex] = el}
@@ -161,7 +161,7 @@ function AddExercise({ exercise, deleteExercise, editNote }) {
                     </View>
 
                     <View style={styles.inputBox}>
-                        <Pressable style={styles.pressable} onPress={() => notesRefs.current[rowIndex].focus()}>
+                        <Pressable style={styles.pressable} onPressIn={() => notesRefs.current[rowIndex].focus()} onPress={() => {}}>
                             <Text style={styles.placeholderText}>Notes</Text>
                             <TextInput
                                 ref={el => notesRefs.current[rowIndex] = el}
@@ -294,12 +294,11 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 4,
-        backgroundColor: 'lightblue',
+        backgroundColor: '#0e0e0e',
     },
     pressable: {
-        width: '100%',
+        width: '115%',
         alignItems: 'center',
-
     },
     // .
 });

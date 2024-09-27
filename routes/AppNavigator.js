@@ -16,7 +16,13 @@ import { SQLiteProvider } from 'expo-sqlite';
 import EditExerciseModal from '../components/EditExerciseModal';
 import EditNoteModal from '../components/EditNoteModal';
 
+const getCurrentDay = () => {
+  const date = new Date();
+  const options = { weekday: 'long' }; // This will return the full name of the day (e.g., "Monday")
+  const currentDay = date.toLocaleDateString('en-US', options);
 
+  return currentDay;
+};
 
 const RootStack = createNativeStackNavigator();
 
@@ -62,7 +68,7 @@ function RootStackScreen() {
                 onLeft2ButtonPress={() => console.log('left2')}
                 onRight1ButtonPress={() => console.log('right2')}
                 onRight2ButtonPress={() => navigation.navigate('ChooseExerciseModal')}
-                title="Title Day/Text"
+                title={() => getCurrentDay()}
               />
           ),
           headerStyle: {
