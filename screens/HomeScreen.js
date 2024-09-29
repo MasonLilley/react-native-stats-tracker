@@ -1,28 +1,34 @@
 // screens/HomeScreen.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, FlatList } from 'react-native';
+import WorkoutBlurb from '../components/WorkoutBlurb'; 
+import * as SQLite from 'expo-sqlite';
 
-const HomeScreen = () => {
-  // Mocked workout data
-  const workouts = [
-    { id: '1', name: 'Full Body Workout', date: '2024-09-20' },
-    { id: '2', name: 'Cardio Blast', date: '2024-09-18' },
-    { id: '3', name: 'Strength Training', date: '2024-09-15' },
-  ];
+function HomeScreen() {
+  const db = SQLite.useSQLiteContext();
+  const [workouts, setWorkouts] = useState([]);
 
-  const renderItem = ({ item }) => (
-    <View style={[styles.item, styles.darkItem]}>
-      <Text style={[styles.workoutName, styles.darkText]}>{item.name}</Text>
-      <Text style={[styles.workoutDate, styles.darkSubText]}>{item.date}</Text>
-    </View>
-  );
+  async function getWorkouts() {
+    const result = await db.getAllAsync('SELECT * FROM workouts');
+    console.log('workouts:',result);
+    setWorkouts(result);
+  }
+
+  useEffect(() => {
+    async function fetchData() {
+      await getWorkouts();
+      console.log(workouts);
+    }
+
+    fetchData();
+  }, [db])
 
   return (
     <View style={[styles.container, styles.darkContainer]}>
       <Text style={[styles.title, styles.darkText]}>Past Workouts</Text>
       <FlatList
         data={workouts}
-        renderItem={renderItem}
+        renderItem={({ item }) => <WorkoutBlurb item={item} />}
         keyExtractor={item => item.id}
         ListEmptyComponent={<Text style={[styles.text, styles.darkText]}>No workouts found</Text>}
       />

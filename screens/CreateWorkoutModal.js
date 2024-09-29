@@ -11,6 +11,10 @@ function CreateWorkoutModal({ navigation }) {
   const [selectedExercise, setSelectedExercise] = useState(null);
 
   useEffect(() => {
+    if (route.params?.sets) {
+      setExercises(route.params.sets);
+    }
+    
     console.log(route.params?.selectedExercise);
     if (route.params?.selectedExercise) {
       const newExercise = {
@@ -21,7 +25,7 @@ function CreateWorkoutModal({ navigation }) {
       };
       setExercises([...exercises, newExercise]);
     }
-  }, [route.params?.selectedExercise]);
+  }, [route.params?.selectedExercise, route.params?.sets]);
 
   const updateExerciseNote = async (note, exerciseName) => {
     console.log('Changing', exerciseName, "'s note to:", note);

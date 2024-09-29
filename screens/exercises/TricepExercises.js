@@ -11,7 +11,7 @@ function TricepsScreen({ onAnimateButton }) {
 
   async function getData() {
     const result = await db.getAllAsync('SELECT * FROM Exercises');
-    setExercises(result);
+    setExercises(result.filter((item) => item.muscle == 'tricep'));
   }
 
   useEffect(() => {
