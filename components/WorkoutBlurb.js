@@ -9,28 +9,25 @@ import { useNavigation } from '@react-navigation/native';
 function WorkoutBlurb({ item }) {
     const navigation = useNavigation();
     const db = SQLite.useSQLiteContext();
+    const [sets, setSets] = useState([]);
 
-    sets = [];
+    async function getSetsFromWorkout() {
+        const result = await db.getAllAsync('SELECT * FROM Sets WHERE date = ?', [item.date]);
+        setSets(result);
+        console.log("All Sets w/ Name + Date:",result);
 
-    async function getAllData() {
-        const result = await db.getAllAsync('SELECT * FROM Exercises');
-        setExercises(result);
-      }
-
-    const getSetsFromWorkout = async () => {
-        const result = await db.getAllAsync('SELECT * FROM Exercises');
-        // console.log(result);
+        if (Array.isArray(result)) {
+            navigation.navigate('CreateWorkoutModal', { sets: result });
+        } else {
+            console.error("Expected result to be an array but got:", result);
+        }
     }
 
     return(
         <View style={styles.mainContainer}>
             <TouchableOpacity style={[styles.item, styles.darkItem]} 
             activeOpacity={0.8}
-            onPress={() => {
-                getSetsFromWorkout();
-                // console.log("Sets:",sets);
-                // navigation.navigate('CreateWorkoutModal', {sets: sets});
-            }}>
+            onPress={getSetsFromWorkout}>
                 <Text style={[styles.workoutName, styles.darkText]}>{item.workout_name}</Text>
                 <Text style={[styles.workoutDate, styles.darkSubText]}>{item.date}</Text>
             </TouchableOpacity>        
@@ -41,7 +38,7 @@ function WorkoutBlurb({ item }) {
 const styles = StyleSheet.create({
     mainContainer: {
         width: '100%',
-        height: '100%',
+        height: '65%',
     },
     container: {
         flex: 1,

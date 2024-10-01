@@ -17,7 +17,6 @@ function TricepsScreen({ onAnimateButton }) {
   useEffect(() => {
     db.withTransactionAsync(async () => {
       await getData();
-      console.log(exercises);
     });
   }, [db]);
 

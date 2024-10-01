@@ -34,13 +34,21 @@ export default function App() {
   }
   
   const originalWarn = console.warn;
+  const originalError = console.error;
 
   console.warn = (message) => {
-    if (message.includes('Non-serializable values were found in the navigation state. Check:')) {
+    if (message.includes('Non-serializable values were found in the navigation state.')) {
       return;
     }
     originalWarn(message);
   };
+
+  console.error = (message) => {
+    if (message.includes('Warning: Functions are not valid as a React child.')) {
+      return;
+    }
+    originalError(message);
+  }
 
   return (
     <React.Suspense fallback={<DatabaseFallback />}>

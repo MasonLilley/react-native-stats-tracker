@@ -10,14 +10,13 @@ function HomeScreen() {
 
   async function getWorkouts() {
     const result = await db.getAllAsync('SELECT * FROM workouts');
-    console.log('workouts:',result);
+    console.log('All Workouts:',result);
     setWorkouts(result);
   }
 
   useEffect(() => {
     async function fetchData() {
       await getWorkouts();
-      console.log(workouts);
     }
 
     fetchData();
@@ -26,12 +25,14 @@ function HomeScreen() {
   return (
     <View style={[styles.container, styles.darkContainer]}>
       <Text style={[styles.title, styles.darkText]}>Past Workouts</Text>
-      <FlatList
-        data={workouts}
-        renderItem={({ item }) => <WorkoutBlurb item={item} />}
-        keyExtractor={item => item.id}
-        ListEmptyComponent={<Text style={[styles.text, styles.darkText]}>No workouts found</Text>}
-      />
+      <View style={styles.list}>
+        <FlatList
+          data={workouts.reverse()}
+          renderItem={({ item }) => <WorkoutBlurb item={item} />}
+          keyExtractor={item => item.id}
+          ListEmptyComponent={<Text style={[styles.text, styles.darkText]}>No workouts found</Text>}
+        />
+      </View>
     </View>
   );
 };
@@ -51,6 +52,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1c1c1c',
     flex: 1,
     alignItems: 'center',
+    width: '100%',
   },
   darkText: {
     color: '#fff',
@@ -58,24 +60,10 @@ const styles = StyleSheet.create({
   darkSubText: {
     color: '#bbb',
   },
-  item: {
-    padding: 15,
-    borderRadius: 10,
-    marginVertical: 8,
+  list: {
+    height: '100%',
     width: '100%',
-  },
-  darkItem: {
-    backgroundColor: '#333', // Dark mode item background
-  },
-  workoutName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  workoutDate: {
-    fontSize: 14,
-  },
-  text: {
-    fontSize: 18,
+    alignItems: 'center',
   },
 });
 

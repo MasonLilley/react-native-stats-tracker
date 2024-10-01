@@ -1,10 +1,11 @@
 import * as SQLite from 'expo-sqlite';
-import React, { useState, useRef, useEffect } from 'react';
-import { View, StyleSheet, Text, TextInput, TouchableOpacity, Alert, Pressable, Modal } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, Text, TextInput, TouchableOpacity, Button, Alert, Pressable, Modal } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import EditExerciseModal from './EditExerciseModal';
+import { TouchableWithoutFeedback } from 'react-native-web';
 
-function AddExercise({ exercise, deleteExercise, editNote, givenSets }) {
+function ViewExercise({ exercise, deleteExercise, editNote }) {
     const db = SQLite.useSQLiteContext();
     const placeholderColor = '#888';
     const [rows, setRows] = useState([{ reps: '', weight: '', notes: '', muscle: '' }]);
@@ -13,36 +14,12 @@ function AddExercise({ exercise, deleteExercise, editNote, givenSets }) {
     const repsRefs = useRef([]);
     const weightRefs = useRef([]);
     const notesRefs = useRef([]);
-    const [exerciseNote, setExerciseNote] = useState('');
-
-    useEffect(() => {
-        if (givenSets && givenSets.length > 0) {
-            const filledRows = givenSets.map(set => ({
-                reps: set[0].toString(),
-                weight: set[1].toString(),
-                notes: set[2],
-                muscle: exercise.muscle,
-            }));
-            setRows(filledRows);
-        }
-    }, [givenSets, exercise.muscle]);
-
-    async function getExerciseNote(exerciseName) {
-        try {
-            const result = await db.getAllAsync('SELECT * FROM Exercises WHERE name = ?', exerciseName);
-            console.log("Returning note:",result[0].notes);
-            setExerciseNote(result[0].notes);
-            return result[0].notes;
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
+    
     async function addToDatabase(row) {
         const statement = await db.prepareAsync("INSERT INTO Sets (exercise_name, reps, weight, date, note, muscle) VALUES ($name, $reps, $weight, $date, $note, $muscle)");
 
         const sets = await db.getAllAsync("SELECT * FROM Sets");
-        console.log("sets before: ", sets);
+        console.log("sets before: ",sets);
 
         try {
             let result = await statement.executeAsync({ 
@@ -53,34 +30,34 @@ function AddExercise({ exercise, deleteExercise, editNote, givenSets }) {
                 $note: row.notes,
                 $muscle: row.muscle
             });
-        } catch (e) {
+        } catch(e) {
             console.log(e);
         } finally {
             await statement.finalizeAsync();
             const sets = await db.getAllAsync("SELECT * FROM Sets");
             console.log("finalized async, sets now: ", sets);
         }
-    }
+      }
 
-    // ROW STUFF
+    //ROW STUFF
 
     const addRow = () => {
-        setRows([...rows, { reps: '', weight: '', notes: '', muscle: exercise.muscle }]);
+        setRows([...rows, { name: 'test', reps: '', weight: '', notes: '', muscle: exercise.muscle }]);
     };
 
     const handleFocus = (index) => {
         setFocusedInputIndex(index);
     };
-
+    
     const handleBlur = () => {
         setFocusedInputIndex(null);
     };
 
     const logRows = async () => {
         for (const row of rows) {
-            if (row.reps === '') {
+            if (row.reps == '') {
                 Alert.alert('Undefined Reps', 'One or more of your sets have undefined reps. Please fix or press dismiss to autofill reps.');
-            } else if (row.weight === '') {
+            } else if (row.weight == '') {
                 Alert.alert('Undefined Weight', 'One or more of your sets have undefined weight. Please fix or press dismiss to autofill weight.');
             } else {
                 console.log('Success! Row added: ', row);
@@ -109,22 +86,25 @@ function AddExercise({ exercise, deleteExercise, editNote, givenSets }) {
         setRows(updatedRows);
     };
 
+    const handleDropdownChange = (value) => {
+        setSelectedDropdown(value);
+    };
+
     const closeModal = () => {
         setModalVisible(false);
-    };
+    }
 
     const deleteSets = async () => {
         let result = await db.execAsync("DELETE FROM Sets");
         console.log("Deleted Sets");
-    };
+    }
 
     return (
         <View style={styles.exerciseBox}>
             <View style={styles.topRow}>
                 <View>
-                    {/* Render as usual UNLESS we are given sets to render from a previous workout; Then render those titles through database calls. */}
-                    <Text style={styles.exerciseName}>{(!givenSets && exercise) ? exercise.name : exercise}</Text>
-                    <Text style={styles.exerciseNotes}>{(!givenSets && exercise) ? exercise.notes : getExerciseNote(exercise) == null ? "No note curretly" : exerciseNote}</Text>
+                    <Text style={styles.exerciseName}>{exercise.name}</Text>
+                    <Text style={styles.exerciseNotes}>{exercise.notes}</Text>
                 </View>
 
                 <TouchableOpacity onPress={() => {
@@ -135,16 +115,16 @@ function AddExercise({ exercise, deleteExercise, editNote, givenSets }) {
                 </TouchableOpacity>
             </View>
 
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={modalVisible}>
-                <View style={styles.centeredView}>
-                    <View style={styles.modalContent}>
-                        <EditExerciseModal deleteExercise={deleteExercise} editNote={editNote} closeModal={closeModal} logRows={logRows} deleteSets={deleteSets}/>
-                    </View>
+        <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}>
+            <View style={styles.centeredView}>
+                <View style={styles.modalContent}>
+                    <EditExerciseModal deleteExercise={deleteExercise} editNote={editNote} closeModal={closeModal} logRows={logRows} deleteSets={deleteSets}/>
                 </View>
-            </Modal>
+            </View>
+        </Modal>
 
             {rows.map((row, rowIndex) => (
                 <View key={rowIndex} style={[
@@ -152,8 +132,8 @@ function AddExercise({ exercise, deleteExercise, editNote, givenSets }) {
                     focusedInputIndex === rowIndex && styles.focusedInputRow,
                 ]}>
                     <View style={styles.inputBox}>
-                        <Pressable style={styles.pressable} onPressIn={() => repsRefs.current[rowIndex].focus()} onPress={() => {}}>
-                            <Text style={styles.placeholderText}>Reps</Text>
+                    <Pressable style={styles.pressable} onPressIn={() => repsRefs.current[rowIndex].focus()} onPress={() => {}}                    >
+                        <Text style={styles.placeholderText}>Reps</Text>
                             <TextInput
                                 ref={el => repsRefs.current[rowIndex] = el}
                                 style={styles.input}
@@ -166,16 +146,16 @@ function AddExercise({ exercise, deleteExercise, editNote, givenSets }) {
                     </View>
 
                     <View style={styles.inputBox}>
-                        <Pressable style={styles.pressable} onPressIn={() => weightRefs.current[rowIndex].focus()} onPress={() => {}}>
-                            <Text style={styles.placeholderText}>Weight</Text>
-                            <TextInput
-                                ref={el => weightRefs.current[rowIndex] = el}
-                                style={styles.input}
-                                value={row.weight}
-                                onChangeText={(input) => handleWeightChange(input, rowIndex)}
-                                onFocus={() => handleFocus(rowIndex)}
-                                onBlur={handleBlur}
-                                keyboardType="decimal-pad" />
+                    <Pressable style={styles.pressable} onPressIn={() => weightRefs.current[rowIndex].focus()} onPress={() => {}}>
+                        <Text style={styles.placeholderText}>Weight</Text>
+                        <TextInput
+                            ref={el => weightRefs.current[rowIndex] = el}
+                            style={styles.input}
+                            value={row.weight}
+                            onChangeText={(input) => handleWeightChange(input, rowIndex)}
+                            onFocus={() => handleFocus(rowIndex)}
+                            onBlur={handleBlur}
+                            keyboardType="decimal-pad" />
                         </Pressable>
                     </View>
 
@@ -241,15 +221,15 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         borderWidth: 2,
         borderRadius: 10,
-        borderColor: '#2c2c2c',
-        backgroundColor: '#1c1c1e',
+        borderColor: '#2c2c2c', // Darker border
+        backgroundColor: '#1c1c1e', // Dark background
     },
     focusedInputRow: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.8,
         shadowRadius: 8,
-        elevation: 6,
+        elevation: 6, // Increase shadow for focused input
     },
     input: {
         backgroundColor: '#333',
@@ -277,7 +257,7 @@ const styles = StyleSheet.create({
         padding: 12,
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'center', // Align items to center for better appearance
     },
     placeholderText: {
         color: '#888',
@@ -295,6 +275,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    testOpacity: {
+        width: '100%',
+        alignItems: 'center'
+    },
     centeredView: {
         flex: 1,
         justifyContent: 'center',
@@ -309,11 +293,13 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 4,
+        backgroundColor: '#0e0e0e',
     },
     pressable: {
         width: '115%',
         alignItems: 'center',
     },
+    // .
 });
 
-export default AddExercise;
+export default ViewExercise;
