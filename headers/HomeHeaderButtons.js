@@ -7,6 +7,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const HomeHeaderButtons = ({ onLeft1ButtonPress, onLeft2ButtonPress, onRight1ButtonPress, onRight2ButtonPress, title }) => (
   <View style={styles.container}>
     <View style={styles.leftContainer}>
+    <TouchableOpacity style={[styles.button, styles.leftButton]} onPress={onLeft1ButtonPress}>
+      <Ionicons name="bar-chart" size={30} color="red" style={styles.icon} />
+      </TouchableOpacity>
     </View>
 
     <View style={styles.centerContainer}>
@@ -43,6 +46,9 @@ const styles = StyleSheet.create({
       color: 'black',
       fontSize: 16,
       fontWeight: 'bold',
+    },
+    leftButton: {
+      marginLeft: -40,
     },
   });
   

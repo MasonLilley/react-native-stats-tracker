@@ -1,6 +1,5 @@
 // AppNavigator.js
 import React from 'react';
-
 import { LogBox } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -12,9 +11,8 @@ import ChooseExerciseModal from '../screens/ChooseExerciseModal';
 import CreateWorkoutHeaderButtons from '../headers/CreateWorkoutHeaderButtons';
 import ChooseExerciseButtons from '../headers/ChooseExerciseButtons';
 import TricepExercises from '../screens/exercises/TricepExercises';
-import { SQLiteProvider } from 'expo-sqlite';
-import EditExerciseModal from '../components/EditExerciseModal';
 import EditNoteModal from '../components/EditNoteModal';
+import StatisticsHome from '../screens/statistics/StatisticsHome';
 
 const getCurrentDay = () => {
   const date = new Date();
@@ -51,6 +49,7 @@ function RootStackScreen() {
         <RootStack.Screen name="Home" component={HomeScreen} options={({ navigation }) => ({
             headerLeft: () => (
               <HomeHeaderButtons
+                onLeft1ButtonPress={() => navigation.navigate('StatisticsHome')}
                 onRight2ButtonPress={() => navigation.navigate('CreateWorkoutModal')}
                 title="Home title"
               />
@@ -111,6 +110,16 @@ function RootStackScreen() {
             options={{ title: 'Triceps Exercises' }}
           />
         </RootStack.Group>
+
+        <RootStack.Group screenOptions={{ presentation: 'card' }}>
+          <RootStack.Screen
+            name="StatisticsHome"
+            component={StatisticsHome}
+            options={{ title: 'Statistics Home' }}
+          />
+        </RootStack.Group>
+
+
     </RootStack.Navigator>
     </NavigationContainer>
     // </SQLiteProvider>
